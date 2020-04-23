@@ -12,31 +12,35 @@ class InfoPage extends Component {
   }
 
   componentDidMount() {
+    this.getShelfItems()
+  }
+
+  getShelfItems = () => {
     const config = {
       headers: { 'Content-Type': 'application/json' },
       withCredentials: true,
     };
 
     axios.get(`/api/shelf`, config)
-     .then( (response) => {
-       console.log(response)
-       this.setState({
-         shelfitems: response.data
-       })
-       
-     }).catch( (error) => {
-       alert('Bad things happened...')
-       console.log('Error in get /api/shelf', error)
-     })
+      .then((response) => {
+        console.log(response)
+        this.setState({
+          shelfitems: response.data
+        })
+
+      }).catch((error) => {
+        alert('Bad things happened...')
+        console.log('Error in get /api/shelf', error)
+      })
   }
 
-     deleteBtn=(event, item)=>{
-      console.log('in deleteBtn', event.target.item);
-      let id = event.target.item;
-      axios.delete(`/api/shelf/${id}`)
-        .then(response => {
-          console.log('response is', response)
-        });
+  deleteBtn = (item) => {
+  console.log('in deleteBtn', item.id);
+  axios.delete(`/api/shelf/${item.id}`)
+    .then(response => {
+      console.log('response is', response)
+      this.getShelfItems()
+    });
   }
 
   render() { 
@@ -44,9 +48,9 @@ class InfoPage extends Component {
       <div>
         <p>Shelf Items:</p>
         {this.state.shelfitems.map( item => (
-          <div width="500px" height="600px" margin="auto">
-            <img src={item.image_url} width="500px" height="500px"></img>
-            <h3>{item.description} --- <button name={item.id} onClick={this.deleteBtn}>Delete</button></h3>
+          <div width="500px" height="600px" margin="auto" key={item.id}>
+            <img src={item.image_url} alt={item.id} width="500px" height="500px"></img>
+            <h3>{item.description} --- <button name={item.id} onClick={() => this.deleteBtn(item)}>Delete</button></h3>
             
           </div>
         ))
