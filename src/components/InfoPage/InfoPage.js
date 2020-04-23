@@ -8,7 +8,9 @@ import axios from 'axios'
 
 class InfoPage extends Component {
   state = { 
-    shelfitems: []
+    shelfitems: [],
+    description: '', 
+    url: '' ,
   }
 
   componentDidMount() {
@@ -34,9 +36,33 @@ class InfoPage extends Component {
       })
   }
 
+  handleChange = (event, name) => {
+    console.log( 'got change', name, event.target.value );
+    this.setState({
+      ...this.state,
+      [ name ]: event.target.value,
+    })
+  }
+
+  handleClick = (event) => {
+    console.log( 'Got click on add item', this.state )
+    axios.post( '/api/shelf', this.state)
+      .then( (response) => {
+        console.log( response );
+        this.setState({
+          ...this.state,
+          description: '',
+          url: '',
+        })
+      })
+      .catch( (error) => {
+        console.log( 'Error adding to shelf', error )
+      })
+  }
+  
   deleteBtn = (item) => {
-  console.log('in deleteBtn', item.id);
-  axios.delete(`/api/shelf/${item.id}`)
+    console.log('in deleteBtn', item.id);
+    axios.delete(`/api/shelf/${item.id}`)
     .then(response => {
       console.log('response is', response)
       this.getShelfItems()
@@ -55,6 +81,11 @@ class InfoPage extends Component {
           </div>
         ))
       }
+        <form>
+          <label>Description:</label><input type='text' onChange={ (event) => this.handleChange(event, 'description')}></input>
+          <label>URL:</label><input type='text' onChange={ (event) => this.handleChange(event, 'url')}></input>
+          <button onClick={ (event) => this.handleClick(event) }>Add Item</button>
+        </form>
       </div>
      );
   }
