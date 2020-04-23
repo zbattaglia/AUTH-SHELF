@@ -30,6 +30,15 @@ class InfoPage extends Component {
      })
   }
 
+     deleteBtn=(event, item)=>{
+      console.log('in deleteBtn', event.target.item);
+      let id = event.target.item;
+      axios.delete(`/api/shelf/${id}`)
+        .then(response => {
+          console.log('response is', response)
+        });
+  }
+
   render() { 
     return ( 
       <div>
@@ -37,7 +46,7 @@ class InfoPage extends Component {
         {this.state.shelfitems.map( item => (
           <div width="500px" height="600px" margin="auto">
             <img src={item.image_url} width="500px" height="500px"></img>
-            <h3>{item.description} --- <button>DELETE</button></h3>
+            <h3>{item.description} --- <button name={item.id} onClick={this.deleteBtn}>Delete</button></h3>
             
           </div>
         ))
